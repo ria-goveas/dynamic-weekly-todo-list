@@ -15,9 +15,6 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
         }
 
@@ -26,39 +23,33 @@
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             width: 100%;
-            max-width: 500px;
+            max-width: 1400px;
+            margin: 0 auto;
             padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
         h1 {
             color: #333;
-            margin-bottom: 30px;
-            text-align: center;
             font-size: 2rem;
         }
 
-        .input-container {
+        .week-navigation {
             display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
+            align-items: center;
+            gap: 15px;
         }
 
-        #todoInput {
-            flex: 1;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        #todoInput:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        button {
-            padding: 15px 25px;
+        .nav-btn {
+            padding: 10px 20px;
             background: #667eea;
             color: white;
             border: none;
@@ -69,32 +60,96 @@
             font-weight: 600;
         }
 
-        button:hover {
+        .nav-btn:hover {
             background: #5568d3;
         }
 
-        button:active {
-            transform: scale(0.98);
+        .week-display {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            min-width: 200px;
+            text-align: center;
         }
 
-        #todoList {
-            list-style: none;
+        .week-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .day-column {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 15px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .day-header {
+            text-align: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .day-name {
+            font-size: 14px;
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .day-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .day-number.today {
+            color: #667eea;
+        }
+
+        .day-input-container {
+            margin-bottom: 15px;
+        }
+
+        .day-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .day-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .day-todos {
+            flex: 1;
+            overflow-y: auto;
+            max-height: 300px;
         }
 
         .todo-item {
             display: flex;
             align-items: center;
-            gap: 15px;
-            padding: 15px;
-            margin-bottom: 10px;
-            background: #f8f9fa;
-            border-radius: 10px;
+            gap: 10px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .todo-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateX(3px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .todo-item.completed {
@@ -107,74 +162,176 @@
         }
 
         .todo-checkbox {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             cursor: pointer;
             accent-color: #667eea;
+            flex-shrink: 0;
         }
 
         .todo-text {
             flex: 1;
-            font-size: 16px;
+            font-size: 14px;
             color: #333;
+            word-break: break-word;
         }
 
         .delete-btn {
             background: #ff6b6b;
-            padding: 8px 15px;
-            font-size: 14px;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+            flex-shrink: 0;
         }
 
         .delete-btn:hover {
             background: #ee5a5a;
         }
 
-        .empty-state {
+        .empty-day {
             text-align: center;
             color: #999;
-            padding: 40px 20px;
-            font-size: 18px;
+            padding: 20px 10px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 1200px) {
+            .week-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .week-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .container {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .week-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📝 Todo List</h1>
-        <div class="input-container">
-            <input 
-                type="text" 
-                id="todoInput" 
-                placeholder="Add a new task..."
-                autocomplete="off"
-            >
-            <button onclick="addTodo()">Add</button>
+        <div class="header">
+            <h1>📅 Weekly Todo List</h1>
+            <div class="week-navigation">
+                <button class="nav-btn" onclick="previousWeek()">← Previous</button>
+                <div class="week-display" id="weekDisplay"></div>
+                <button class="nav-btn" onclick="nextWeek()">Next →</button>
+            </div>
         </div>
-        <ul id="todoList"></ul>
+        <div class="week-grid" id="weekGrid"></div>
     </div>
 
     <script>
-        let todos = JSON.parse(localStorage.getItem('todos')) || [];
+        let currentWeekStart = new Date();
+        // Set to start of current week (Sunday)
+        currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay());
+        currentWeekStart.setHours(0, 0, 0, 0);
 
-        function renderTodos() {
-            const todoList = document.getElementById('todoList');
-            
-            if (todos.length === 0) {
-                todoList.innerHTML = '<li class="empty-state">No tasks yet. Add one above! ✨</li>';
-                return;
+        let todos = JSON.parse(localStorage.getItem('weeklyTodos')) || {};
+
+        function getDateKey(date) {
+            // Use local date components to avoid timezone issues
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function formatDate(date) {
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                          'July', 'August', 'September', 'October', 'November', 'December'];
+            return `${days[date.getDay()]}, ${months[date.getMonth()]} ${date.getDate()}`;
+        }
+
+        function getWeekDates(startDate) {
+            const dates = [];
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(startDate);
+                date.setDate(startDate.getDate() + i);
+                dates.push(date);
             }
+            return dates;
+        }
 
-            todoList.innerHTML = todos.map((todo, index) => `
-                <li class="todo-item ${todo.completed ? 'completed' : ''}">
-                    <input 
-                        type="checkbox" 
-                        class="todo-checkbox" 
-                        ${todo.completed ? 'checked' : ''}
-                        onchange="toggleTodo(${index})"
-                    >
-                    <span class="todo-text">${escapeHtml(todo.text)}</span>
-                    <button class="delete-btn" onclick="deleteTodo(${index})">Delete</button>
-                </li>
-            `).join('');
+        function isToday(date) {
+            const today = new Date();
+            return date.toDateString() === today.toDateString();
+        }
+
+        function renderWeek() {
+            const weekGrid = document.getElementById('weekGrid');
+            const weekDisplay = document.getElementById('weekDisplay');
+            const weekDates = getWeekDates(currentWeekStart);
+            
+            // Update week display
+            const weekEnd = new Date(weekDates[6]);
+            weekDisplay.textContent = `${formatDate(weekDates[0])} - ${formatDate(weekEnd)}`;
+
+            weekGrid.innerHTML = weekDates.map((date, index) => {
+                const dateKey = getDateKey(date);
+                const dayTodos = todos[dateKey] || [];
+                const dayName = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][date.getDay()];
+                const isTodayClass = isToday(date) ? 'today' : '';
+
+                // Sort todos: incomplete first, then completed
+                const sortedTodos = [...dayTodos].sort((a, b) => {
+                    if (a.completed === b.completed) return 0;
+                    return a.completed ? 1 : -1;
+                });
+
+                return `
+                    <div class="day-column">
+                        <div class="day-header">
+                            <div class="day-name">${dayName}</div>
+                            <div class="day-number ${isTodayClass}">${date.getDate()}</div>
+                        </div>
+                        <div class="day-input-container">
+                            <input 
+                                type="text" 
+                                class="day-input" 
+                                placeholder="Add task..."
+                                data-date="${dateKey}"
+                                onkeypress="handleDayInputKeypress(event, '${dateKey}')"
+                            >
+                        </div>
+                        <div class="day-todos" data-date="${dateKey}">
+                            ${sortedTodos.length === 0 
+                                ? '<div class="empty-day">No tasks</div>'
+                                : sortedTodos.map((todo, todoIndex) => {
+                                    const actualIndex = dayTodos.findIndex(t => t.id === todo.id);
+                                    return `
+                                        <div class="todo-item ${todo.completed ? 'completed' : ''}">
+                                            <input 
+                                                type="checkbox" 
+                                                class="todo-checkbox" 
+                                                ${todo.completed ? 'checked' : ''}
+                                                onchange="toggleTodo('${dateKey}', ${actualIndex})"
+                                            >
+                                            <span class="todo-text">${escapeHtml(todo.text)}</span>
+                                            <button class="delete-btn" onclick="deleteTodo('${dateKey}', ${actualIndex})">×</button>
+                                        </div>
+                                    `;
+                                }).join('')
+                            }
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function escapeHtml(text) {
@@ -183,45 +340,71 @@
             return div.innerHTML;
         }
 
-        function addTodo() {
-            const input = document.getElementById('todoInput');
+        function handleDayInputKeypress(event, dateKey) {
+            if (event.key === 'Enter') {
+                addTodoToDay(dateKey);
+            }
+        }
+
+        function addTodoToDay(dateKey) {
+            const input = document.querySelector(`.day-input[data-date="${dateKey}"]`);
             const text = input.value.trim();
             
             if (text === '') {
                 return;
             }
 
-            todos.push({ text, completed: false });
+            if (!todos[dateKey]) {
+                todos[dateKey] = [];
+            }
+
+            const newTodo = {
+                id: Date.now() + Math.random(),
+                text: text,
+                completed: false
+            };
+
+            todos[dateKey].push(newTodo);
             input.value = '';
             saveTodos();
-            renderTodos();
+            renderWeek();
         }
 
-        function toggleTodo(index) {
-            todos[index].completed = !todos[index].completed;
+        function toggleTodo(dateKey, index) {
+            if (!todos[dateKey] || !todos[dateKey][index]) return;
+            
+            todos[dateKey][index].completed = !todos[dateKey][index].completed;
             saveTodos();
-            renderTodos();
+            renderWeek();
         }
 
-        function deleteTodo(index) {
-            todos.splice(index, 1);
+        function deleteTodo(dateKey, index) {
+            if (!todos[dateKey] || !todos[dateKey][index]) return;
+            
+            todos[dateKey].splice(index, 1);
+            if (todos[dateKey].length === 0) {
+                delete todos[dateKey];
+            }
             saveTodos();
-            renderTodos();
+            renderWeek();
+        }
+
+        function previousWeek() {
+            currentWeekStart.setDate(currentWeekStart.getDate() - 7);
+            renderWeek();
+        }
+
+        function nextWeek() {
+            currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+            renderWeek();
         }
 
         function saveTodos() {
-            localStorage.setItem('todos', JSON.stringify(todos));
+            localStorage.setItem('weeklyTodos', JSON.stringify(todos));
         }
 
-        // Allow Enter key to add todo
-        document.getElementById('todoInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                addTodo();
-            }
-        });
-
         // Initial render
-        renderTodos();
+        renderWeek();
     </script>
 </body>
 </html>

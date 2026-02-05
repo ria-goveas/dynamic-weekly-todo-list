@@ -74,9 +74,14 @@
 
         .week-grid {
             display: grid;
-            grid-template-columns: repeat(7, 1fr);
+            grid-template-columns: 0 repeat(7, 1fr) 0;
             gap: 15px;
             margin-bottom: 20px;
+            transition: grid-template-columns 0.2s ease;
+        }
+
+        body.dragging-todo .week-grid {
+            grid-template-columns: 60px repeat(7, 1fr) 60px;
         }
 
         .day-column {
@@ -145,6 +150,48 @@
             background: white;
             border-radius: 8px;
             transition: transform 0.2s, box-shadow 0.2s;
+            cursor: grab;
+        }
+
+        .todo-item:active {
+            cursor: grabbing;
+        }
+
+        .todo-item.dragging {
+            opacity: 0.5;
+        }
+
+        .day-todos.drag-over {
+            background: rgba(102, 126, 234, 0.15);
+            border-radius: 10px;
+            border: 2px dashed #667eea;
+        }
+
+        .week-drop-zone {
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px dashed #667eea;
+            background: rgba(102, 126, 234, 0.08);
+            font-size: 13px;
+            font-weight: 600;
+            color: #667eea;
+            opacity: 0;
+            pointer-events: none;
+            overflow: hidden;
+            transition: opacity 0.2s ease, background 0.2s;
+        }
+
+        body.dragging-todo .week-drop-zone {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .week-drop-zone.drag-over {
+            background: rgba(102, 126, 234, 0.22);
         }
 
         .todo-item:hover {
@@ -199,17 +246,65 @@
             font-size: 14px;
         }
 
+        .save-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            flex-wrap: wrap;
+        }
+
+        .save-status {
+            font-size: 13px;
+            color: #28a745;
+            min-height: 20px;
+        }
+
+        .save-status.saved {
+            animation: fadeOut 2s ease-in 1s forwards;
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; }
+        }
+
+        .btn-secondary {
+            padding: 8px 16px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .import-input {
+            display: none;
+        }
+
         @media (max-width: 1200px) {
             .week-grid {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: 0 repeat(7, 1fr) 0;
+            }
+            body.dragging-todo .week-grid {
+                grid-template-columns: 60px repeat(7, 1fr) 60px;
             }
         }
 
         @media (max-width: 768px) {
             .week-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: 0 repeat(7, 1fr) 0;
             }
-            
+            body.dragging-todo .week-grid {
+                grid-template-columns: 50px repeat(7, 1fr) 50px;
+            }
             .container {
                 padding: 15px;
             }
@@ -217,7 +312,10 @@
 
         @media (max-width: 480px) {
             .week-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 0 repeat(7, 1fr) 0;
+            }
+            body.dragging-todo .week-grid {
+                grid-template-columns: 44px repeat(7, 1fr) 44px;
             }
         }
     </style>
@@ -233,6 +331,12 @@
             </div>
         </div>
         <div class="week-grid" id="weekGrid"></div>
+        <div class="save-toolbar">
+            <span class="save-status" id="saveStatus" aria-live="polite"></span>
+            <button type="button" class="btn-secondary" onclick="exportBackup()">Export backup to file</button>
+            <button type="button" class="btn-secondary" onclick="document.getElementById('importFile').click()">Import from backup</button>
+            <input type="file" id="importFile" class="import-input" accept=".json,application/json" onchange="importBackup(event)">
+        </div>
     </div>
 
     <script>
@@ -282,7 +386,10 @@
             const weekEnd = new Date(weekDates[6]);
             weekDisplay.textContent = `${formatDate(weekDates[0])} - ${formatDate(weekEnd)}`;
 
-            weekGrid.innerHTML = weekDates.map((date, index) => {
+            const dropPrevHtml = '<div class="week-drop-zone" id="dropPrevWeek" data-move="prev" title="Drop to move to same day, previous week">← Prev week</div>';
+            const dropNextHtml = '<div class="week-drop-zone" id="dropNextWeek" data-move="next" title="Drop to move to same day, next week">Next week →</div>';
+
+            weekGrid.innerHTML = dropPrevHtml + weekDates.map((date, index) => {
                 const dateKey = getDateKey(date);
                 const dayTodos = todos[dateKey] || [];
                 const dayName = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][date.getDay()];
@@ -309,13 +416,13 @@
                                 onkeypress="handleDayInputKeypress(event, '${dateKey}')"
                             >
                         </div>
-                        <div class="day-todos" data-date="${dateKey}">
+                        <div class="day-todos" data-date="${dateKey}" ondragover="handleDayDragOver(event)" ondragleave="handleDayDragLeave(event)" ondrop="handleDayDrop(event)">
                             ${sortedTodos.length === 0 
                                 ? '<div class="empty-day">No tasks</div>'
                                 : sortedTodos.map((todo, todoIndex) => {
                                     const actualIndex = dayTodos.findIndex(t => t.id === todo.id);
                                     return `
-                                        <div class="todo-item ${todo.completed ? 'completed' : ''}">
+                                        <div class="todo-item ${todo.completed ? 'completed' : ''}" draggable="true" ondragstart="handleTodoDragStart(event, '${dateKey}', ${actualIndex})" ondragend="handleTodoDragEnd(event)">
                                             <input 
                                                 type="checkbox" 
                                                 class="todo-checkbox" 
@@ -331,7 +438,7 @@
                         </div>
                     </div>
                 `;
-            }).join('');
+            }).join('') + dropNextHtml;
         }
 
         function escapeHtml(text) {
@@ -344,6 +451,87 @@
             if (event.key === 'Enter') {
                 addTodoToDay(dateKey);
             }
+        }
+
+        const DRAG_TYPE = 'application/x-weekly-todos';
+
+        function handleTodoDragStart(event, dateKey, index) {
+            if (event.target.closest('input, button')) {
+                event.preventDefault();
+                return;
+            }
+            event.dataTransfer.setData(DRAG_TYPE, JSON.stringify({ dateKey, index }));
+            event.dataTransfer.effectAllowed = 'move';
+            event.target.classList.add('dragging');
+            document.body.classList.add('dragging-todo');
+        }
+
+        function handleTodoDragEnd(event) {
+            event.target.classList.remove('dragging');
+            document.body.classList.remove('dragging-todo');
+            document.querySelectorAll('.day-todos.drag-over, .week-drop-zone.drag-over').forEach(el => el.classList.remove('drag-over'));
+        }
+
+        function handleDayDragOver(event) {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'move';
+            event.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDayDragLeave(event) {
+            if (!event.currentTarget.contains(event.relatedTarget)) {
+                event.currentTarget.classList.remove('drag-over');
+            }
+        }
+
+        function handleDayDrop(event) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('drag-over');
+            const targetDateKey = event.currentTarget.dataset.date;
+            const data = event.dataTransfer.getData(DRAG_TYPE);
+            if (!data) return;
+            const { dateKey, index } = JSON.parse(data);
+            moveTodo(dateKey, index, targetDateKey);
+        }
+
+        function setupWeekDropZones() {
+            ['prev', 'next'].forEach(move => {
+                const el = document.getElementById('drop' + (move === 'prev' ? 'Prev' : 'Next') + 'Week');
+                if (!el) return;
+                el.ondragover = function (e) {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    el.classList.add('drag-over');
+                };
+                el.ondragleave = function (e) {
+                    if (!el.contains(e.relatedTarget)) el.classList.remove('drag-over');
+                };
+                el.ondrop = function (e) {
+                    e.preventDefault();
+                    el.classList.remove('drag-over');
+                    const data = e.dataTransfer.getData(DRAG_TYPE);
+                    if (!data) return;
+                    const { dateKey, index } = JSON.parse(data);
+                    const sourceDate = new Date(dateKey + 'T12:00:00');
+                    const newDate = new Date(sourceDate);
+                    newDate.setDate(sourceDate.getDate() + (move === 'next' ? 7 : -7));
+                    const newDateKey = getDateKey(newDate);
+                    moveTodo(dateKey, index, newDateKey);
+                };
+            });
+        }
+
+        function moveTodo(fromDateKey, fromIndex, toDateKey) {
+            if (fromDateKey === toDateKey) return;
+            const todo = todos[fromDateKey]?.[fromIndex];
+            if (!todo) return;
+            todos[fromDateKey].splice(fromIndex, 1);
+            if (todos[fromDateKey].length === 0) delete todos[fromDateKey];
+            if (!todos[toDateKey]) todos[toDateKey] = [];
+            todos[toDateKey].push(todo);
+            saveTodos();
+            renderWeek();
+            setupWeekDropZones();
         }
 
         function addTodoToDay(dateKey) {
@@ -401,10 +589,62 @@
 
         function saveTodos() {
             localStorage.setItem('weeklyTodos', JSON.stringify(todos));
+            showSavedStatus();
         }
+
+        function showSavedStatus() {
+            const el = document.getElementById('saveStatus');
+            if (!el) return;
+            el.textContent = 'Saved';
+            el.classList.remove('saved');
+            el.offsetHeight;
+            el.classList.add('saved');
+        }
+
+        function exportBackup() {
+            const data = { weeklyTodos: todos, exportedAt: new Date().toISOString() };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'weekly-todos-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+            a.click();
+            URL.revokeObjectURL(a.href);
+            showSavedStatus();
+        }
+
+        function importBackup(event) {
+            const file = event.target.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function () {
+                try {
+                    const data = JSON.parse(reader.result);
+                    const imported = data.weeklyTodos || data;
+                    if (typeof imported !== 'object' || imported === null) throw new Error('Invalid format');
+                    todos = imported;
+                    saveTodos();
+                    renderWeek();
+                    const statusEl = document.getElementById('saveStatus');
+                    statusEl.textContent = 'Import complete';
+                    statusEl.style.color = '';
+                    statusEl.classList.remove('saved');
+                } catch (e) {
+                    const statusEl = document.getElementById('saveStatus');
+                    statusEl.textContent = 'Import failed: invalid file';
+                    statusEl.style.color = '#dc3545';
+                }
+                event.target.value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        window.addEventListener('beforeunload', function () {
+            saveTodos();
+        });
 
         // Initial render
         renderWeek();
+        setupWeekDropZones();
     </script>
 </body>
 </html>

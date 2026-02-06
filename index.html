@@ -34,6 +34,10 @@
             position: relative;
         }
 
+        .container + .container {
+            margin-top: 24px;
+        }
+
         .container::before {
             content: '';
             position: absolute;
@@ -310,11 +314,17 @@
             font-size: 14px;
         }
 
+        .save-toolbar-wrapper {
+            width: 100%;
+            max-width: 1400px;
+            margin: 24px auto 0;
+        }
+
         .save-toolbar {
             display: flex;
             align-items: center;
             gap: 15px;
-            margin-top: 20px;
+            margin-top: 0;
             padding-top: 20px;
             border-top: 1px solid #e0d8c0;
             flex-wrap: wrap;
@@ -383,6 +393,213 @@
                 grid-template-columns: 44px repeat(7, 1fr) 44px;
             }
         }
+
+        /* Weekly project tracker */
+        .tracker-section {
+            margin-top: 0;
+            padding-top: 0;
+        }
+
+        .tracker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .tracker-header h2 {
+            color: #3d3429;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .month-navigation {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .month-display {
+            font-size: 16px;
+            font-weight: 600;
+            color: #3d3429;
+            min-width: 160px;
+            text-align: center;
+        }
+
+        .month-grid-wrapper {
+            overflow-x: auto;
+            overflow-y: hidden;
+            width: 100%;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .month-grid {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 12px;
+            width: 100%;
+            min-width: min-content;
+        }
+
+        .week-column {
+            flex: 1 1 0;
+            min-width: 140px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 4px;
+            padding: 15px;
+            min-height: 320px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #e8e0c8;
+        }
+
+        .week-column.current-week {
+            box-shadow: 0 2px 12px rgba(61, 52, 41, 0.2), 0 0 0 2px rgba(61, 52, 41, 0.12);
+        }
+
+        .week-column-header {
+            text-align: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e0d8c0;
+        }
+
+        .week-range {
+            font-size: 13px;
+            font-weight: 600;
+            color: #3d3429;
+        }
+
+        .project-input-container {
+            margin-bottom: 12px;
+        }
+
+        .project-input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #d8d0b8;
+            border-radius: 4px;
+            font-size: 13px;
+            background: rgba(255, 255, 255, 0.7);
+            font-family: inherit;
+            color: #3d3429;
+        }
+
+        .project-input::placeholder {
+            color: #6b6156;
+        }
+
+        .project-input:focus {
+            outline: none;
+            border-color: #8b7355;
+            background: #fff;
+        }
+
+        .project-items {
+            flex: 1;
+            overflow-y: auto;
+            max-height: 260px;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .project-items.drag-over {
+            background: rgba(139, 115, 85, 0.12);
+            border-radius: 4px;
+            border: 2px dashed #8b7355;
+        }
+
+        .project-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            margin-bottom: 6px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 4px;
+            border: 1px solid #e8e0c8;
+            cursor: grab;
+        }
+
+        .project-item:active {
+            cursor: grabbing;
+        }
+
+        .project-item.dragging {
+            opacity: 0.5;
+        }
+
+        .project-item .project-text {
+            flex: 1;
+            font-size: 13px;
+            color: #3d3429;
+            word-break: break-word;
+            cursor: text;
+        }
+
+        .project-item .project-delete {
+            background: #b85450;
+            color: #faf6e8;
+            border: 1px solid #a04844;
+            border-radius: 4px;
+            padding: 4px 10px;
+            font-size: 11px;
+            cursor: pointer;
+            font-family: inherit;
+            flex-shrink: 0;
+        }
+
+        .project-item .project-delete:hover {
+            background: #a04844;
+        }
+
+        .project-item.editing .project-text {
+            cursor: default;
+        }
+
+        .project-edit-input {
+            flex: 1;
+            font-size: 13px;
+            color: #3d3429;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #8b7355;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-family: inherit;
+            min-width: 0;
+        }
+
+        .empty-week {
+            text-align: center;
+            color: #5a5046;
+            padding: 16px 8px;
+            font-size: 13px;
+        }
+
+        .jump-to-current {
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid #e0d8c0;
+            text-align: center;
+        }
+
+        .jump-to-current .btn-jump {
+            padding: 6px 14px;
+            background: transparent;
+            color: #8b7355;
+            border: 1px solid #8b7355;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 500;
+        }
+
+        .jump-to-current .btn-jump:hover {
+            background: rgba(139, 115, 85, 0.12);
+        }
     </style>
 </head>
 <body>
@@ -396,6 +613,31 @@
             </div>
         </div>
         <div class="week-grid" id="weekGrid"></div>
+        <div class="jump-to-current">
+            <button type="button" class="btn-jump" onclick="jumpToCurrentWeek()">Jump to current week</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <section class="tracker-section" aria-label="Weekly project tracker">
+            <div class="tracker-header">
+                <h2>Weekly project tracker</h2>
+                <div class="month-navigation">
+                    <button type="button" class="nav-btn" onclick="previousMonth()">← Previous</button>
+                    <div class="month-display" id="monthDisplay"></div>
+                    <button type="button" class="nav-btn" onclick="nextMonth()">Next →</button>
+                </div>
+            </div>
+            <div class="month-grid-wrapper">
+                <div class="month-grid" id="projectsGrid"></div>
+            </div>
+            <div class="jump-to-current">
+                <button type="button" class="btn-jump" onclick="jumpToCurrentMonth()">Jump to current month</button>
+            </div>
+        </section>
+    </div>
+
+    <div class="save-toolbar-wrapper">
         <div class="save-toolbar">
             <span class="save-status" id="saveStatus" aria-live="polite"></span>
             <button type="button" class="btn-secondary" onclick="exportBackup()">Export backup to file</button>
@@ -411,6 +653,10 @@
         currentWeekStart.setHours(0, 0, 0, 0);
 
         let todos = JSON.parse(localStorage.getItem('weeklyTodos')) || {};
+        let currentMonthStart = new Date();
+        currentMonthStart.setDate(1);
+        currentMonthStart.setHours(0, 0, 0, 0);
+        let weeklyProjects = JSON.parse(localStorage.getItem('weeklyProjects')) || {};
 
         function getDateKey(date) {
             // Use local date components to avoid timezone issues
@@ -440,6 +686,228 @@
         function isToday(date) {
             const today = new Date();
             return date.toDateString() === today.toDateString();
+        }
+
+        function getWeekKey(date) {
+            const d = new Date(date);
+            d.setDate(d.getDate() - d.getDay());
+            d.setHours(0, 0, 0, 0);
+            return getDateKey(d);
+        }
+
+        function getWeeksInMonth(monthStart) {
+            const weeks = [];
+            const start = new Date(monthStart);
+            start.setDate(1);
+            const firstSunday = new Date(start);
+            firstSunday.setDate(start.getDate() - start.getDay());
+            const end = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0);
+            let weekStart = new Date(firstSunday);
+            while (weekStart <= end || weeks.length < 4) {
+                weeks.push(new Date(weekStart));
+                weekStart.setDate(weekStart.getDate() + 7);
+                if (weeks.length >= 6) break;
+            }
+            return weeks;
+        }
+
+        function formatWeekRange(weekStartDate) {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const start = new Date(weekStartDate);
+            const end = new Date(start);
+            end.setDate(end.getDate() + 6);
+            const s = `${months[start.getMonth()]} ${start.getDate()}`;
+            const e = `${months[end.getMonth()]} ${end.getDate()}`;
+            return `${s} – ${e}`;
+        }
+
+        function formatMonthYear(date) {
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            return `${months[date.getMonth()]} ${date.getFullYear()}`;
+        }
+
+        function isCurrentWeek(weekStartDate) {
+            const today = new Date();
+            const thisWeekKey = getWeekKey(today);
+            return getWeekKey(weekStartDate) === thisWeekKey;
+        }
+
+        function renderProjectsMonth() {
+            const grid = document.getElementById('projectsGrid');
+            const monthDisplay = document.getElementById('monthDisplay');
+            if (!grid || !monthDisplay) return;
+            monthDisplay.textContent = formatMonthYear(currentMonthStart);
+            const weeks = getWeeksInMonth(currentMonthStart);
+            grid.innerHTML = weeks.map(weekStart => {
+                const weekKey = getWeekKey(weekStart);
+                const items = weeklyProjects[weekKey] || [];
+                const currentClass = isCurrentWeek(weekStart) ? 'current-week' : '';
+                return `
+                    <div class="week-column ${currentClass}">
+                        <div class="week-column-header">
+                            <div class="week-range">${formatWeekRange(weekStart)}</div>
+                        </div>
+                        <div class="project-input-container">
+                            <input type="text" class="project-input" placeholder="Add project"
+                                data-week="${weekKey}"
+                                onkeypress="handleProjectInputKeypress(event, '${weekKey}')">
+                        </div>
+                        <div class="project-items" data-week="${weekKey}" ondragover="handleProjectDragOver(event)" ondragleave="handleProjectDragLeave(event)" ondrop="handleProjectDrop(event)">
+                            ${items.length === 0
+                                ? '<div class="empty-week">Nothing yet</div>'
+                                : items.map((item, idx) => `
+                                    <div class="project-item" draggable="true" ondragstart="handleProjectDragStart(event, '${weekKey}', ${idx})" ondragend="handleProjectDragEnd(event)">
+                                        <span class="project-text" ondblclick="startEditProjectItem(event, '${weekKey}', ${idx})" title="Double-click to edit">${escapeHtml(item.text)}</span>
+                                        <button type="button" class="project-delete" onclick="deleteProjectItem('${weekKey}', ${idx})">×</button>
+                                    </div>
+                                `).join('')
+                            }
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function handleProjectInputKeypress(event, weekKey) {
+            if (event.key === 'Enter') {
+                addProjectItem(weekKey);
+            }
+        }
+
+        function addProjectItem(weekKey) {
+            const input = document.querySelector(`.project-input[data-week="${weekKey}"]`);
+            if (!input) return;
+            const text = input.value.trim();
+            if (text === '') return;
+            if (!weeklyProjects[weekKey]) weeklyProjects[weekKey] = [];
+            weeklyProjects[weekKey].push({ id: Date.now() + Math.random(), text });
+            input.value = '';
+            saveProjects();
+            renderProjectsMonth();
+        }
+
+        const DRAG_TYPE_PROJECT = 'application/x-weekly-projects';
+
+        function handleProjectDragStart(event, weekKey, index) {
+            if (event.target.closest('button, input')) {
+                event.preventDefault();
+                return;
+            }
+            event.dataTransfer.setData(DRAG_TYPE_PROJECT, JSON.stringify({ weekKey, index }));
+            event.dataTransfer.effectAllowed = 'move';
+            event.target.classList.add('dragging');
+            document.body.classList.add('dragging-project');
+        }
+
+        function handleProjectDragEnd(event) {
+            event.target.classList.remove('dragging');
+            document.body.classList.remove('dragging-project');
+            document.querySelectorAll('.project-items.drag-over').forEach(el => el.classList.remove('drag-over'));
+        }
+
+        function handleProjectDragOver(event) {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'move';
+            event.currentTarget.classList.add('drag-over');
+        }
+
+        function handleProjectDragLeave(event) {
+            if (!event.currentTarget.contains(event.relatedTarget)) {
+                event.currentTarget.classList.remove('drag-over');
+            }
+        }
+
+        function handleProjectDrop(event) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('drag-over');
+            const toWeekKey = event.currentTarget.dataset.week;
+            const data = event.dataTransfer.getData(DRAG_TYPE_PROJECT);
+            if (!data) return;
+            const { weekKey: fromWeekKey, index } = JSON.parse(data);
+            moveProjectItem(fromWeekKey, index, toWeekKey);
+        }
+
+        function moveProjectItem(fromWeekKey, fromIndex, toWeekKey) {
+            if (fromWeekKey === toWeekKey) return;
+            const item = weeklyProjects[fromWeekKey]?.[fromIndex];
+            if (!item) return;
+            weeklyProjects[fromWeekKey].splice(fromIndex, 1);
+            if (weeklyProjects[fromWeekKey].length === 0) delete weeklyProjects[fromWeekKey];
+            if (!weeklyProjects[toWeekKey]) weeklyProjects[toWeekKey] = [];
+            weeklyProjects[toWeekKey].push(item);
+            saveProjects();
+            renderProjectsMonth();
+        }
+
+        function deleteProjectItem(weekKey, index) {
+            if (!weeklyProjects[weekKey] || !weeklyProjects[weekKey][index]) return;
+            weeklyProjects[weekKey].splice(index, 1);
+            if (weeklyProjects[weekKey].length === 0) delete weeklyProjects[weekKey];
+            saveProjects();
+            renderProjectsMonth();
+        }
+
+        function updateProjectItem(weekKey, index, newText) {
+            if (!weeklyProjects[weekKey] || !weeklyProjects[weekKey][index]) return;
+            newText = (newText || '').trim();
+            if (newText === '') return;
+            weeklyProjects[weekKey][index].text = newText;
+            saveProjects();
+            renderProjectsMonth();
+        }
+
+        function startEditProjectItem(event, weekKey, index) {
+            if (event.target.closest('input')) return;
+            const item = event.target.closest('.project-item');
+            const span = event.target;
+            if (!item || !span.classList.contains('project-text')) return;
+            const currentText = (weeklyProjects[weekKey] && weeklyProjects[weekKey][index]) ? weeklyProjects[weekKey][index].text : '';
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'project-edit-input';
+            input.value = currentText;
+            item.classList.add('editing');
+            span.replaceWith(input);
+            input.focus();
+            input.select();
+            function finish() {
+                const newText = input.value.trim();
+                item.classList.remove('editing');
+                if (newText !== '' && newText !== currentText) {
+                    updateProjectItem(weekKey, index, newText);
+                } else {
+                    renderProjectsMonth();
+                }
+            }
+            input.onblur = finish;
+            input.onkeydown = function (e) {
+                if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+                if (e.key === 'Escape') { e.preventDefault(); renderProjectsMonth(); }
+            };
+        }
+
+        function saveProjects() {
+            localStorage.setItem('weeklyProjects', JSON.stringify(weeklyProjects));
+            showSavedStatus();
+        }
+
+        function previousMonth() {
+            currentMonthStart.setMonth(currentMonthStart.getMonth() - 1);
+            renderProjectsMonth();
+        }
+
+        function nextMonth() {
+            currentMonthStart.setMonth(currentMonthStart.getMonth() + 1);
+            renderProjectsMonth();
+        }
+
+        function jumpToCurrentMonth() {
+            const now = new Date();
+            currentMonthStart.setFullYear(now.getFullYear());
+            currentMonthStart.setMonth(now.getMonth());
+            currentMonthStart.setDate(1);
+            currentMonthStart.setHours(0, 0, 0, 0);
+            renderProjectsMonth();
         }
 
         function renderWeek() {
@@ -698,6 +1166,15 @@
             renderWeek();
         }
 
+        function jumpToCurrentWeek() {
+            const now = new Date();
+            currentWeekStart.setTime(now.getTime());
+            currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay());
+            currentWeekStart.setHours(0, 0, 0, 0);
+            renderWeek();
+            setupWeekDropZones();
+        }
+
         function saveTodos() {
             localStorage.setItem('weeklyTodos', JSON.stringify(todos));
             showSavedStatus();
@@ -713,7 +1190,7 @@
         }
 
         function exportBackup() {
-            const data = { weeklyTodos: todos, exportedAt: new Date().toISOString() };
+            const data = { weeklyTodos: todos, weeklyProjects: weeklyProjects, exportedAt: new Date().toISOString() };
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
@@ -733,6 +1210,11 @@
                     const imported = data.weeklyTodos || data;
                     if (typeof imported !== 'object' || imported === null) throw new Error('Invalid format');
                     todos = imported;
+                    if (data.weeklyProjects != null && typeof data.weeklyProjects === 'object') {
+                        weeklyProjects = data.weeklyProjects;
+                        saveProjects();
+                        renderProjectsMonth();
+                    }
                     saveTodos();
                     renderWeek();
                     const statusEl = document.getElementById('saveStatus');
@@ -751,11 +1233,13 @@
 
         window.addEventListener('beforeunload', function () {
             saveTodos();
+            saveProjects();
         });
 
         // Initial render
         renderWeek();
         setupWeekDropZones();
+        renderProjectsMonth();
     </script>
 </body>
 </html>
